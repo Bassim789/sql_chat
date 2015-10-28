@@ -18,7 +18,7 @@ function getPassword_decrypt()
 	
 
 	// DECRYP
-	$salt = 'fDodD)7DWqzJJ3';
+	$salt = 'fDodD7DWqzJJ3';
 	$password = simple_decrypt($password, $salt);
 
 
