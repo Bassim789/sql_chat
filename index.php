@@ -17,14 +17,14 @@
             <div class="ball1"></div>
         </div>
     	<div id="main_title">
-    		SQL Chat
+    	    SQL Chat
     	</div>
     	<div id="body_inner">
-	    	<input class="input_base" id="input_pseudo" type="text" placeholder="Pseudo" value="<?php echo $pseudo;?>">
-	    	<br>
-	    	<textarea class="input_base" id="input_message" placeholder="Message" rows="2"></textarea>
-	    	<div class="btn" id="btn_send" onclick="send_message()">Send</div>
-            	<div id="message_list"></div>
+    	    <input class="input_base" id="input_pseudo" type="text" placeholder="Pseudo" value="<?php echo $pseudo;?>">
+	    <br>
+	    <textarea class="input_base" id="input_message" placeholder="Message" rows="2"></textarea>
+	    <div class="btn" id="btn_send" onclick="send_message()">Send</div>
+            <div id="message_list"></div>
 	</div>
     </body>
     <script src="js.js"></script>
