@@ -24,8 +24,8 @@
 	    	<br>
 	    	<textarea class="input_base" id="input_message" placeholder="Message" rows="2"></textarea>
 	    	<div class="btn" id="btn_send" onclick="send_message()">Send</div>
-            <div id="message_list"></div>
-	    </div>
+            	<div id="message_list"></div>
+	</div>
     </body>
     <script src="js.js"></script>
 </html>
