@@ -3,6 +3,9 @@
 // SET ID
 id_pseudo = "#input_pseudo";
 id_textarea = "#input_message";
+
+
+// SET INTERVAL TIME IN MS
 interval_time_new_message = 3000;
 interval_time_reload_all_messages = 30000;
 
