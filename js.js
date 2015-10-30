@@ -7,51 +7,48 @@ id_textarea = "#input_message";
 
 // SET INTERVAL TIME IN MS
 interval_time_new_message = 3000;
-interval_time_reload_all_messages = 30000;
 
 // ON START
 $( window ).load(function()
 {
-    ajax_get_messages('reload');
+    ajax_get_messages();
 
     setInterval(function()
     {
-        ajax_get_messages('append');
+        ajax_get_messages();
     }, interval_time_new_message);
-
-    setInterval(function()
-    {
-        ajax_get_messages('reload');
-    }, interval_time_reload_all_messages);
 
     if (on_desktop())
     {
         $(id_textarea).focus();
     }
 
-    $('#loading').hide();
+    // SET PSEUDO COOKIE
+    $("#input_pseudo").val(getCookie('pseudo'));
+
 });
 
 
-// CATCH KEYDOWN IN TEXTAREA
-$(id_textarea).keydown(function(event)
-{
-    if(isSend(event))
+
+
+// GET COOKIE
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++)
     {
-        send_message();
+        var c = ca[i];
+        while (c.charAt(0)==' ')
+        {
+            c = c.substring(1);
+        } 
+        if (c.indexOf(name) == 0)
+        {
+            return c.substring(name.length,c.length);
+        }
     }
-});
-
-
-// CATCH KEYUP IN TEXTAREA
-$(id_textarea).keyup(function(event)
-{
-    if(isSend(event))
-    {
-        $(id_textarea).val('');
-    }
-    adapt_textarea_height(id_textarea);
-});
+    return "";
+}
 
 
 // CHECK IF MESSAGE IS SEND ON PRESS ENTER
@@ -107,13 +104,47 @@ function send_message()
     }
     adapt_textarea_height(id_textarea);
     ajax_send_message(pseudo, text);
+    document.cookie = 'pseudo=' + pseudo + '; expires=Sun, 01 Feb 2019 00:00:00 UTC; path=/';
 }
+
+
+
+// EVENT
+
+
+// CLICK ON SEND BTN
+$('#btn_send').click(function(event)
+{
+    send_message();
+});
+
+
+// CATCH KEYDOWN IN TEXTAREA
+$(id_textarea).keydown(function(event)
+{
+    if(isSend(event))
+    {
+        send_message();
+    }
+});
+
+
+// CATCH KEYUP IN TEXTAREA
+$(id_textarea).keyup(function(event)
+{
+    if(isSend(event))
+    {
+        $(id_textarea).val('');
+    }
+    adapt_textarea_height(id_textarea);
+});
+
+
 
 
 // AJAX SEND MESSAGE TO PHP
 function ajax_send_message(pseudo, text)
 {
-    $('#loading').css('display', 'inline-block');
     $.ajax
     ({
         type: 'POST',
@@ -125,37 +156,25 @@ function ajax_send_message(pseudo, text)
         },
         error: function (err)
         {
-            $('#loading').hide();
             console.log('error: ajax_send');
         } 
     });
 }
 
 
-
 // AJAX GET MESSAGES FROM PHP
 first_load = 'true';
-function ajax_get_messages(mode)
+function ajax_get_messages()
 {
     var pseudo = $(id_pseudo).val();
     $.ajax
     ({
         type: 'POST',
         url: 'messages_get.php',
-        data: {'first_load' : first_load, 'mode' : mode, 'pseudo' : pseudo},
+        data: {'first_load' : first_load, 'pseudo' : pseudo},
         success: function (messages)
         {   
-            if (mode == 'append')
-            {
-                $('#message_list').prepend(messages);
-            }
-
-            else if (mode == 'reload')
-            {
-                $('#message_list').html(messages);
-            }
-
-            $('#loading').hide();
+            $('#message_list').prepend(messages);
             first_load = 'false';
         },
         error: function (err)

@@ -18,7 +18,15 @@ function getPassword_decrypt()
 	
 
 	// DECRYP
+<<<<<<< Updated upstream
 	$salt = 'fDodD7DWqzJJ3';
+=======
+<<<<<<< HEAD
+	$salt = 'p4FnQ4qpeg99';
+=======
+	$salt = 'fDodD7DWqzJJ3';
+>>>>>>> origin/master
+>>>>>>> Stashed changes
 	$password = simple_decrypt($password, $salt);
 
 

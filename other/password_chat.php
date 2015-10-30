@@ -1,1 +1,1 @@
-<?php $password = 'password_encrypted';?>
+<?php $password = 'umSNHZlFkogDLdrUjZk7tjgJazdftxFVbAmODmZ/S2c=';?>

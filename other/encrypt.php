@@ -3,7 +3,7 @@
 /* ENCRYPT FUNCTION
 
 $text ='';
-$salt ='gd834fdsfd3';
+$salt ='gFS23bHwtz4';
 
 function simple_encrypt($text,$salt)
 {  

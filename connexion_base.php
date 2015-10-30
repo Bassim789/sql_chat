@@ -8,12 +8,15 @@ try
 	$dbname = 'chat';
 	$user = 'chat_user';
 	$password = 'dg99qJ3qnWW2';
+<<<<<<< Updated upstream
 	
 	
 	/* ENCRYPTED PASSWORD (OPTIONAL) 
 	include_once 'other/get_passowrd_decrypt.php';
 	$password = getPassword_decrypt();
 	*/
+=======
+>>>>>>> Stashed changes
 
 	
 	// CONNEXION
