@@ -1,0 +1,1 @@
+<?php $password = 'pass_encrypt';?>
