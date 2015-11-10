@@ -7,7 +7,7 @@ id_textarea = "#input_message";
 
 // SET INTERVAL TIME IN MS
 interval_time_new_message = 3000;
-interval_time_new_stat = 10000;
+interval_time_new_stat = 3000;
 
 // ON START
 $( window ).load(function()
@@ -23,6 +23,7 @@ $( window ).load(function()
 
 	setInterval(function()
 	{
+		update_ranking();
 		ajax_get_stat();
 	}, interval_time_new_stat);
 
@@ -41,7 +42,8 @@ $( window ).load(function()
 
 
 // GET COOKIE
-function getCookie(cname) {
+function getCookie(cname)
+{
 	var name = cname + "=";
 	var ca = document.cookie.split(';');
 	for(var i = 0; i < ca.length; i++)
@@ -80,6 +82,30 @@ function on_desktop()
 }
 
 
+// UNSELECT ALL STAT DIV
+function unselect_all_stat_div()
+{
+	var stats_div = ['#nb_pseudo', '#nb_message', '#nb_char'];
+	stats_div.forEach(function(stat_div)
+	{
+		$(stat_div).removeClass('stat_div_select');
+	});
+}
+
+
+// UPDATE RANKING IF OPEN
+function update_ranking()
+{
+
+	// GET ID OF STAT DIV AND GET RANKING
+	$('.stat_div_select').each(function() {
+	    var stat_div = '#' + this.id;
+	    ajax_get_ranking(stat_div);
+	});
+
+}
+
+
 // ADAPT TEXTAREA HEIGHT
 function adapt_textarea_height(id)
 {
@@ -98,6 +124,15 @@ function adapt_textarea_height(id)
 		compteur += 1;
 	};
 	$(id).prop("rows", compteur);
+}
+
+
+// AJAX SHOW RANKING
+function show_ranking(stat_div)
+{
+	unselect_all_stat_div()
+	$(stat_div).addClass('stat_div_select');
+	ajax_get_ranking(stat_div);
 }
 
 
@@ -131,6 +166,7 @@ $('#btn_send').click(function(event)
 // CLICK ON CLOSE RANKING
 $('#close_ranking').click(function(event)
 {
+	unselect_all_stat_div();
 	$('#ranking').hide();
 	$('#close_ranking').hide();
 
@@ -140,21 +176,21 @@ $('#close_ranking').click(function(event)
 // CLICK ON STAT PSEUDO
 $('#nb_pseudo').click(function(event)
 {
-	show_ranking('pseudo');
+	show_ranking('#nb_pseudo');
 });
 
 
 // CLICK ON STAT MESSAGE
 $('#nb_message').click(function(event)
 {
-	show_ranking('message');
+	show_ranking('#nb_message');
 });
 
 
 // CLICK ON STAT CHAR
 $('#nb_char').click(function(event)
 {
-	show_ranking('char');
+	show_ranking('#nb_char');
 });
 
 
@@ -181,11 +217,7 @@ $(id_textarea).keyup(function(event)
 
 
 
-
-
-
-
-
+// AJAX
 
 
 // AJAX SEND MESSAGE TO PHP
@@ -199,7 +231,8 @@ function ajax_send_message(pseudo, text)
 		success: function ()
 		{   
 			ajax_get_messages();
-			ajax_get_stat();          
+			ajax_get_stat();
+			update_ranking();        
 		},
 		error: function (err)
 		{
@@ -232,6 +265,7 @@ function ajax_get_messages()
 }
 
 
+// AJAX GET STAT DIV
 function ajax_get_stat()
 {
 	$.ajax
@@ -261,13 +295,14 @@ function ajax_get_stat()
 }
 
 
-function show_ranking(type)
+// AJAX GET RANKING
+function ajax_get_ranking(stat_div)
 {
 	$.ajax
 	({
 		type: 'POST',
 		url: 'ranking_get.php',
-		data: {'type' : type},
+		data: {'stat_div' : stat_div},
 		success: function (data)
 		{   
 			$('#close_ranking').show();

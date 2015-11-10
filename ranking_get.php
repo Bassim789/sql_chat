@@ -6,19 +6,19 @@ include 'connexion_base.php';
 
 
 // POST DATA
-$type = $_POST['type'];
+$stat_div = $_POST['stat_div'];
 
 
 // SET ORDER
-if ($type == 'pseudo')
+if ($stat_div == '#nb_pseudo')
 {
 	$order = "pseudo ASC";
 }
-else if ($type == 'message')
+else if ($stat_div == '#nb_message')
 {
 	$order = 'nb_message DESC';
 }
-else if ($type == 'char')
+else if ($stat_div == '#nb_char')
 {
 	$order = 'nb_char DESC';
 }
