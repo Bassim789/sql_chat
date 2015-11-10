@@ -9,6 +9,7 @@ id_textarea = "#input_message";
 interval_time_new_message = 3000;
 interval_time_new_stat = 3000;
 
+
 // ON START
 $( window ).load(function()
 {
@@ -37,8 +38,6 @@ $( window ).load(function()
 	$("#input_pseudo").val(getCookie('pseudo'));
 
 });
-
-
 
 
 // GET COOKIE
@@ -99,8 +98,8 @@ function update_ranking()
 
 	// GET ID OF STAT DIV AND GET RANKING
 	$('.stat_div_select').each(function() {
-	    var stat_div = '#' + this.id;
-	    ajax_get_ranking(stat_div);
+		var stat_div = '#' + this.id;
+		ajax_get_ranking(stat_div);
 	});
 
 }
@@ -291,7 +290,6 @@ function ajax_get_stat()
 			console.log('error: ajax_get_stat');
 		} 
 	});
-			
 }
 
 
