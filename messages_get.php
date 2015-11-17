@@ -5,9 +5,8 @@ session_start();
 include 'connexion_base.php';
 
 
-// POST DATA
+// IS FIRST LOAD
 $first_load = $_POST['first_load'];
-$pseudo = $_POST['pseudo'];
 
 
 // RESET MESSAGE ID IF FIRST LOAD
@@ -17,25 +16,29 @@ if ($first_load == 'true')
 }
 
 
-// SQL TO GET ONLY NEW MESSAGES
+// SQL TO GET ONLY NEW MESSAGES (max 30, order asc)
 $sql = $bdd->prepare
 (
-	'SELECT message.id AS id, 
-		message.timestamp AS timestamp, 
-		message.text AS text, 
-		user.pseudo AS pseudo
-	FROM message
-	INNER JOIN user ON message.pseudo_id = user.id
-	WHERE message.id > :last_message_id 
-	ORDER BY message.id DESC 
-	LIMIT 1000'
+	'SELECT messages.* FROM
+	(
+		SELECT message.id AS id, 
+			message.timestamp AS timestamp, 
+			message.text AS text, 
+			user.pseudo AS pseudo
+		FROM message
+		INNER JOIN user ON message.pseudo_id = user.id
+		WHERE message.id > :last_message_id 
+		ORDER BY message.id DESC
+		LIMIT 30
+	) 
+	messages ORDER BY messages.id ASC'
 );
 $sql->bindParam(':last_message_id', $_SESSION['last_message_id']);
 
 
 
 // GET EACH MESSAGE
-$compteur = 0;
+$is_messages = false;
 $sql->execute();
 while ($row = $sql->fetch())
 {
@@ -44,6 +47,7 @@ while ($row = $sql->fetch())
 	$message_id = intval($row['id']);
 	$pseudo = nl2br(htmlspecialchars($row['pseudo']));
 	$timestamp = $row['timestamp'];
+	$timestamp_two_lines = substr($timestamp, 0, 10).'<br>'.substr($timestamp, 10);
 	$text = nl2br(htmlspecialchars($row['text']));
 
 
@@ -55,23 +59,27 @@ while ($row = $sql->fetch())
 				<?php echo $pseudo;?>
 			</div>
 			<div class="timestamp_message">
-				<?php echo $timestamp;?>
+				<?php echo $timestamp_two_lines;?>
 			</div>
 		</div>
 		<div class="text_message">
 			<?php echo $text;?>
 		</div>
 	</div>
+	<div class="row_message_separator">
+		<div class="bottom_triangle"></div>
+	</div>
 	<?php
 
-
-	// GET LAST MESSAGE ID
-	$compteur += 1;
-	if ($compteur == 1)
-	{
-		$_SESSION['last_message_id'] = $message_id;
-	}
+	// IS MESSAGES
+	$is_messages = true;
 	
+}
+
+// GET LAST MESSAGE ID
+if ($is_messages)
+{
+	$_SESSION['last_message_id'] = $message_id;
 }
 
 

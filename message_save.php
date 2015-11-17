@@ -5,65 +5,10 @@
 include 'connexion_base.php';
 
 
-// GET POST DATA
-$pseudo = $_POST['pseudo'];
+// GET POST DATA AND SET NB_CHAR
+$pseudo = trim($_POST['pseudo']);
 $text = $_POST['text'];
-
-
-// SET NB_CHAR
 $nb_char = strlen($text);
-
-
-
-// DEFAULT NOT IN DATABASE
-$pseudo_id = 'not_in_database';
-
-
-
-// GET ID IF PSEUDO ALREADY EXIST
-$sql = $bdd->prepare
-(
-	'SELECT id 
-	FROM user
-	WHERE pseudo = :pseudo'
-);
-
-
-// BIND ARGUMENT AND EXECUTE
-$sql->bindParam(':pseudo', $pseudo);
-$sql->execute();
-
-
-// GET ID
-while ($row = $sql->fetch())
-{
-
-	// GET PSEUDO ID
-	$pseudo_id = $row['id'];
-
-}
-
-
-// IF NOT IN DATABASE
-if ($pseudo_id == 'not_in_database')
-{
-	// SQL INSERT NEW PSEUDO
-	$sql = $bdd->prepare
-	(
-		'INSERT INTO user 
-		(pseudo)
-		VALUES
-		(:pseudo)'
-	);
-
-	// BIND ARGUMENT AND EXECUTE
-	$sql->bindParam(':pseudo', $pseudo);
-	$sql->execute();
-
-	// GET PSEUDO ID
-	$pseudo_id = $bdd->lastInsertId();
-
-}
 
 
 // INCREMENTE NB_MESSAGE AND NB_CHAR
@@ -71,15 +16,31 @@ $sql = $bdd->prepare
 (
 	'UPDATE user 
 	SET nb_message = nb_message + 1,
-		nb_char = nb_char + :nb_char
-	WHERE id = :pseudo_id'
+		nb_char = nb_char + :nb_char,
+		id = LAST_INSERT_ID(id)
+	WHERE pseudo = :pseudo'
 );
-
-
-// BIND ARGUMENT AND EXECUTE
-$sql->bindParam(':pseudo_id', $pseudo_id);
+$sql->bindParam(':pseudo', $pseudo);
 $sql->bindParam(':nb_char', $nb_char);
 $sql->execute();
+$pseudo_id = $bdd->lastInsertId();
+
+
+// IF NOT IN DATABASE INSERT NEW USER
+if ($pseudo_id == 0)
+{
+	$sql = $bdd->prepare
+	(
+		'INSERT INTO user 
+		(pseudo, nb_message, nb_char)
+		VALUES
+		(:pseudo, 1, :nb_char)'
+	);
+	$sql->bindParam(':pseudo', $pseudo);
+	$sql->bindParam(':nb_char', $nb_char);
+	$sql->execute();
+	$pseudo_id = $bdd->lastInsertId();
+}
 
 
 // INSERT NEW MESSAGE
@@ -90,11 +51,9 @@ $sql = $bdd->prepare
 	VALUES
 	(:pseudo_id, :text)'
 );
-
-
-// BIND ARGUMENT AND EXECUTE
 $sql->bindParam(':pseudo_id', $pseudo_id);
 $sql->bindParam(':text', $text);
 $sql->execute();
+
 
 ?>

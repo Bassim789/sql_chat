@@ -9,25 +9,33 @@
 		<link rel="stylesheet" href="css.css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script> 
+		<script src="client_functions.js"></script>
 	</head>
 	<body>
-		<div id="main_title">
-			SQL Chat
-		</div>
-		<div id="body_inner">
-			<div id="stat">
-				<div class="stat_div" id="nb_pseudo"></div>
-				<div class="stat_div" id="nb_message"></div>
-				<div class="stat_div" id="nb_char"></div>
+		<div id="header_fixed">
+			<div id="main_title">
+				SQL Chat
 			</div>
-			<div id="close_ranking"></div>
-			<div id="ranking"></div>
-			<input class="input_base" id="input_pseudo" type="text" placeholder="Pseudo">
-			<br>
-			<textarea class="input_base" id="input_message" placeholder="Message" rows="2"></textarea>
-			<div class="btn" id="btn_send">Send</div>
-			<div id="message_list"></div>
+			<div class="body_inner">
+				<div id="stat">
+					<div class="stat_div" id="nb_pseudo"></div>
+					<div class="stat_div" id="nb_message"></div>
+					<div class="stat_div" id="nb_char"></div>
+				</div>
+				<div id="close_ranking"></div>
+			</div>
 		</div>
-		<script src="js.js"></script>
+		<div class="body_inner">
+			<div id="ranking"></div>
+			<div id="message_list"></div>
+			<div id="input_box">
+				<input class="input_base" id="input_pseudo" type="text" placeholder="Pseudo" maxlength="33">
+				<div class="btn" id="btn_send"> > </div>
+				<br>
+				<textarea class="input_base" id="input_message" placeholder="Message" maxlenght="9999"></textarea>
+			</div>
+		</div>
+		<div id="background"></div>
+		<script src="serveur_functions.js"></script>
 	</body>
 </html>

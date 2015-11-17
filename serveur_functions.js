@@ -1,8 +1,8 @@
 
 
-// SET ID
-id_pseudo = "#input_pseudo";
-id_textarea = "#input_message";
+// SET ID INPUT HTML
+id_pseudo = '#input_pseudo';
+id_textarea = '#input_message';
 
 
 // SET INTERVAL TIME IN MS
@@ -13,6 +13,7 @@ interval_time_new_stat = 3000;
 // ON START
 $( window ).load(function()
 {
+	adapt_textarea_height();
 	ajax_get_messages();
 	ajax_get_stat();
 
@@ -40,58 +41,6 @@ $( window ).load(function()
 });
 
 
-// GET COOKIE
-function getCookie(cname)
-{
-	var name = cname + "=";
-	var ca = document.cookie.split(';');
-	for(var i = 0; i < ca.length; i++)
-	{
-		var c = ca[i];
-		while (c.charAt(0)==' ')
-		{
-			c = c.substring(1);
-		} 
-		if (c.indexOf(name) == 0)
-		{
-			return c.substring(name.length,c.length);
-		}
-	}
-	return "";
-}
-
-
-// CHECK IF MESSAGE IS SEND ON PRESS ENTER
-function isSend(event)
-{
-	var is = false;
-	// CATCH ENTER WITHOUT SHIFT ON DESKTOP
-	if(event.keyCode == 13 && !event.shiftKey && on_desktop())
-	{
-		is = true;
-	}
-	return is;
-}
-
-
-// CHECK IF DESKTOP OR MOBILE
-function on_desktop()
-{
-	return $(window).width() > 800;
-}
-
-
-// UNSELECT ALL STAT DIV
-function unselect_all_stat_div()
-{
-	var stats_div = ['#nb_pseudo', '#nb_message', '#nb_char'];
-	stats_div.forEach(function(stat_div)
-	{
-		$(stat_div).removeClass('stat_div_select');
-	});
-}
-
-
 // UPDATE RANKING IF OPEN
 function update_ranking()
 {
@@ -105,32 +54,14 @@ function update_ranking()
 }
 
 
-// ADAPT TEXTAREA HEIGHT
-function adapt_textarea_height(id)
-{
-	var rows = $(id).val().split("\n");
-	var len = 30;
-	if (on_desktop()){
-		len = 80;
-	}
-	var compteur = 1;
-	for (var i = rows.length - 1; i >= 0; i--)
-	{
-		if (rows[i].length > len)
-		{
-			compteur += Math.round((rows[i].length)/len);
-		}
-		compteur += 1;
-	};
-	$(id).prop("rows", compteur);
-}
-
-
 // AJAX SHOW RANKING
 function show_ranking(stat_div)
 {
-	unselect_all_stat_div()
+	unselect_all_stat_div();
 	$(stat_div).addClass('stat_div_select');
+	$('#message_list').hide();
+	$('.body_inner').addClass('white');
+	$('body,html').animate({scrollTop: 0}, 500);
 	ajax_get_ranking(stat_div);
 }
 
@@ -145,10 +76,18 @@ function send_message()
 	{
 		$(id_textarea).focus();
 	}
-	adapt_textarea_height(id_textarea);
-	ajax_send_message(pseudo, text);
+	adapt_textarea_height();
 	document.cookie = 'pseudo=' + pseudo + '; expires=Sun, 01 Feb 2019 00:00:00 UTC; path=/';
+	send_message_call(pseudo, text);
 }
+
+
+// SEND MESSAGE CALL
+function send_message_call(pseudo, text)
+{
+	ajax_send_message(pseudo, text);
+}
+
 
 
 
@@ -168,7 +107,9 @@ $('#close_ranking').click(function(event)
 	unselect_all_stat_div();
 	$('#ranking').hide();
 	$('#close_ranking').hide();
-
+	$('#message_list').show();
+	$('.body_inner').removeClass('white');
+	scroll_bottom_message();
 });
 
 
@@ -210,7 +151,7 @@ $(id_textarea).keyup(function(event)
 	{
 		$(id_textarea).val('');
 	}
-	adapt_textarea_height(id_textarea);
+	adapt_textarea_height();
 });
 
 
@@ -227,7 +168,7 @@ function ajax_send_message(pseudo, text)
 		type: 'POST',
 		url: 'message_save.php',
 		data: {'pseudo' : pseudo, 'text' : text},
-		success: function ()
+		success: function (data)
 		{   
 			ajax_get_messages();
 			ajax_get_stat();
@@ -245,15 +186,19 @@ function ajax_send_message(pseudo, text)
 first_load = 'true';
 function ajax_get_messages()
 {
-	var pseudo = $(id_pseudo).val();
 	$.ajax
 	({
 		type: 'POST',
 		url: 'messages_get.php',
-		data: {'first_load' : first_load, 'pseudo' : pseudo},
+		data: {'first_load' : first_load},
 		success: function (messages)
 		{   
-			$('#message_list').prepend(messages);
+			if (messages.trim() != '')
+			{
+				$('#message_list').append(messages);
+				scroll_bottom_message();
+			}
+			
 			first_load = 'false';
 		},
 		error: function (err)
