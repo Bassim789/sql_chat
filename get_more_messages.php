@@ -1,3 +1,5 @@
+
+
 <?php
 
 // INIT
@@ -5,19 +7,8 @@ session_start();
 include 'connexion_base.php';
 
 
-// IS FIRST LOAD
-$first_load = $_POST['first_load'];
 
-
-// RESET MESSAGE ID IF FIRST LOAD
-if ($first_load == 'true')
-{
-	$_SESSION['last_message_id'] = 0;
-	$_SESSION['first_message_id'] = 0;
-}
-
-
-// SQL TO GET ONLY NEW MESSAGES (max 30, order asc)
+// SQL TO GET OLDER MESSAGES (max 30, order asc)
 $sql = $bdd->prepare
 (
 	'SELECT messages.* FROM
@@ -28,13 +19,13 @@ $sql = $bdd->prepare
 			user.pseudo AS pseudo
 		FROM message
 		INNER JOIN user ON message.pseudo_id = user.id
-		WHERE message.id > :last_message_id 
+		WHERE message.id < :first_message_id 
 		ORDER BY message.id DESC
 		LIMIT 30
 	) 
 	messages ORDER BY messages.id ASC'
 );
-$sql->bindParam(':last_message_id', $_SESSION['last_message_id']);
+$sql->bindParam(':first_message_id', $_SESSION['first_message_id']);
 
 
 
@@ -44,7 +35,6 @@ $sql->execute();
 $compteur = 0;
 while ($row = $sql->fetch())
 {
-
 	// GET MESSAGE INFORMATION
 	$message_id = intval($row['id']);
 	$pseudo = nl2br(htmlspecialchars($row['pseudo']));
@@ -85,12 +75,10 @@ while ($row = $sql->fetch())
 }
 
 // GET LAST MESSAGE ID
-if ($is_messages)
+if (!$is_messages)
 {
-	$_SESSION['last_message_id'] = $message_id;
+	echo "none";
 }
 
 
 ?>
-
-

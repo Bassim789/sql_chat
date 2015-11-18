@@ -10,6 +10,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script> 
 		<script src="client_functions.js"></script>
+		<script src="client_functions_special.js"></script>
 	</head>
 	<body>
 		<div id="header_fixed">
@@ -18,16 +19,24 @@
 			</div>
 			<div class="body_inner">
 				<div id="stat">
-					<div class="stat_div" id="nb_pseudo"></div>
-					<div class="stat_div" id="nb_message"></div>
-					<div class="stat_div" id="nb_char"></div>
+					<div class="stat_div" id="nb_pseudo"> <!-- nb_pseudo --> <br>users</div>
+					<div class="stat_div" id="nb_message"> <!-- nb_message --> <br>msgs</div>
+					<div class="stat_div" id="nb_char"> <!-- nb_char --> <br>chars</div>
 				</div>
 				<div id="close_ranking"></div>
 			</div>
 		</div>
 		<div class="body_inner">
-			<div id="ranking"></div>
-			<div id="message_list"></div>
+			<div id="ranking">
+				<!--
+				each ranks
+				-->
+			</div>
+			<div id="message_list">
+				<!--
+				each messages
+				-->
+			</div>
 			<div id="input_box">
 				<input class="input_base" id="input_pseudo" type="text" placeholder="Pseudo" maxlength="33">
 				<div class="btn" id="btn_send"> > </div>
@@ -37,5 +46,6 @@
 		</div>
 		<div id="background"></div>
 		<script src="serveur_functions.js"></script>
+		<script src="event.js"></script>
 	</body>
 </html>
